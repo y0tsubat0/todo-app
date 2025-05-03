@@ -1,4 +1,5 @@
 import { usePathname } from 'next/navigation'
+import Link from 'next/link'
 import { Home, Trash2, User } from 'lucide-react'
 import useAuthStore from '@/store/useAuthStore'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -30,10 +31,10 @@ export function Navbar() {
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-8">
-            <a href="/" className="text-xl font-bold">Todo App</a>
+            <Link href="/" className="text-xl font-bold">Todo App</Link>
             {user && (
               <div className="flex items-center gap-4">
-                <a 
+                <Link 
                   href="/" 
                   className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
                     pathname === '/' 
@@ -43,8 +44,8 @@ export function Navbar() {
                 >
                   <Home className="h-5 w-5" />
                   할 일 목록
-                </a>
-                <a 
+                </Link>
+                <Link 
                   href="/trash" 
                   className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
                     pathname === '/trash' 
@@ -54,7 +55,7 @@ export function Navbar() {
                 >
                   <Trash2 className="h-5 w-5" />
                   휴지통
-                </a>
+                </Link>
               </div>
             )}
           </div>
