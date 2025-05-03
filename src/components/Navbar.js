@@ -1,6 +1,6 @@
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { Home, Trash2, User } from 'lucide-react'
+import { Home, Trash2, User, BarChart } from 'lucide-react'
 import useAuthStore from '@/store/useAuthStore'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
@@ -36,6 +36,9 @@ export function Navbar() {
             <div className="flex items-center ml-6 space-x-1">
               <Link href="/" className={`p-2 rounded-md hover:bg-slate-100 transition-colors ${pathname === '/' ? 'text-primary' : 'text-muted-foreground'}`}>
                 <Home size={20} />
+              </Link>
+              <Link href="/dashboard" className={`p-2 rounded-md hover:bg-slate-100 transition-colors ${pathname === '/dashboard' ? 'text-primary' : 'text-muted-foreground'}`}>
+                <BarChart size={20} />
               </Link>
               <Link href="/trash" className={`p-2 rounded-md hover:bg-slate-100 transition-colors ${pathname === '/trash' ? 'text-primary' : 'text-muted-foreground'}`}>
                 <Trash2 size={20} />
