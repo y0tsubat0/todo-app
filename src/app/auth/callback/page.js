@@ -27,15 +27,27 @@ export default function AuthCallbackPage() {
 
         const accessToken = hashParams.get('access_token')
         const refreshToken = hashParams.get('refresh_token')
+        const displayName = hashParams.get('display_name')
         
         if (accessToken && refreshToken) {
           // 세션 설정
-          const { data, error: sessionError } = await supabase.auth.setSession({
+          const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
             access_token: accessToken,
             refresh_token: refreshToken
           })
 
           if (sessionError) throw sessionError
+
+          // display name이 있는 경우 프로필 업데이트
+          if (displayName) {
+            const { error: updateError } = await supabase.auth.updateUser({
+              data: { display_name: displayName }
+            })
+
+            if (updateError) {
+              console.error('프로필 업데이트 오류:', updateError)
+            }
+          }
 
           // 메인 페이지로 리다이렉트
           router.push('/')

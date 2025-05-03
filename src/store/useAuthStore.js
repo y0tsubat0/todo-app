@@ -18,15 +18,18 @@ const useAuthStore = create((set) => ({
   },
 
   // 이메일/비밀번호로 회원가입
-  signUp: async (email, password) => {
+  signUp: async (email, password, displayName) => {
     try {
-      console.log('회원가입 시작:', { email })
+      console.log('회원가입 시작:', { email, displayName })
       
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`
+          emailRedirectTo: `${window.location.origin}/auth/callback?display_name=${encodeURIComponent(displayName)}`,
+          data: {
+            display_name: displayName
+          }
         }
       })
 

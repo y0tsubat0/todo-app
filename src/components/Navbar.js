@@ -11,10 +11,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
+import { Button } from '@/components/ui/button'
 
 export function Navbar() {
   const pathname = usePathname()
-  const { user, logout } = useAuthStore()
+  const { user, signOut } = useAuthStore()
 
   const getInitials = (email) => {
     return email
@@ -27,64 +28,47 @@ export function Navbar() {
   }
 
   return (
-    <nav className="bg-white shadow-sm">
-      <div className="container mx-auto px-4 py-3">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-8">
-            <Link href="/" className="text-xl font-bold">Todo App</Link>
-            {user && (
-              <div className="flex items-center gap-4">
-                <Link 
-                  href="/" 
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
-                    pathname === '/' 
-                      ? 'bg-gray-100 text-gray-900' 
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  <Home className="h-5 w-5" />
-                  할 일 목록
-                </Link>
-                <Link 
-                  href="/trash" 
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
-                    pathname === '/trash' 
-                      ? 'bg-gray-100 text-gray-900' 
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  <Trash2 className="h-5 w-5" />
-                  휴지통
-                </Link>
-              </div>
-            )}
-          </div>
+    <nav className="border-b">
+      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="font-semibold text-lg">SimpleTodo</div>
           {user && (
+            <div className="flex items-center ml-6 space-x-1">
+              <Link href="/" className={`p-2 rounded-md hover:bg-slate-100 transition-colors ${pathname === '/' ? 'text-primary' : 'text-muted-foreground'}`}>
+                <Home size={20} />
+              </Link>
+              <Link href="/trash" className={`p-2 rounded-md hover:bg-slate-100 transition-colors ${pathname === '/trash' ? 'text-primary' : 'text-muted-foreground'}`}>
+                <Trash2 size={20} />
+              </Link>
+            </div>
+          )}
+        </div>
+        
+        {user && (
+          <div className="flex items-center gap-4">
             <DropdownMenu>
-              <DropdownMenuTrigger className="rounded-full hover:bg-gray-100 transition-colors">
-                <Avatar>
-                  <AvatarFallback className="bg-emerald-100 text-emerald-700">
-                    {getInitials(user.email)}
-                  </AvatarFallback>
-                </Avatar>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full" aria-label="사용자 메뉴">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback>{getInitials(user.email)}</AvatarFallback>
+                  </Avatar>
+                </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align="end">
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">계정</p>
-                    <p className="text-xs leading-none text-muted-foreground">
-                      {user.email}
-                    </p>
+                    <p className="text-xs text-muted-foreground">사용자</p>
+                    <p className="text-sm font-medium">{user.user_metadata?.display_name || '사용자'} ({user.email})</p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout} className="text-red-600 cursor-pointer">
+                <DropdownMenuItem onClick={signOut}>
                   로그아웃
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </nav>
   )

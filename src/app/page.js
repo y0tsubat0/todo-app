@@ -10,6 +10,9 @@ import { TodoForm } from '@/components/TodoForm'
 import { TodoList } from '@/components/TodoList'
 import { AuthForm } from '@/components/AuthForm'
 import { Trash2 } from 'lucide-react'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 export default function Home() {
   const { user, isLoading: authLoading, checkSession } = useAuthStore()
@@ -65,7 +68,7 @@ export default function Home() {
     <div>
       <Navbar />
       <main className="container mx-auto p-4 max-w-2xl">
-        <h1 className="text-3xl font-bold mb-8">To Do List</h1>
+        <h1 className="text-3xl font-bold mb-8">Hi, {user.user_metadata?.display_name || '사용자'} 👋</h1>
         
         <TodoForm onSubmit={addTodo} />
 
@@ -96,3 +99,5 @@ export default function Home() {
     </div>
   )
 }
+
+
