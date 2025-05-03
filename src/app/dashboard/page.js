@@ -117,12 +117,6 @@ export default function Dashboard() {
           <>
             {/* 월별 할 일 통계 섹션 */}
             <div className="mb-8">
-              <h2 className="text-xl font-semibold mb-4 flex items-center">
-                <BarChart className="w-5 h-5 mr-2" />
-                <span>월별 할 일 통계</span>
-              </h2>
-              <p className="text-muted-foreground mb-4">최근 월별 할 일 통계 정보</p>
-              
               <div className="relative">
                 {isLoadingStats ? (
                   <div className="text-center py-8">통계 로딩 중...</div>
@@ -133,8 +127,28 @@ export default function Dashboard() {
                         {monthlyStats.length > 0 && currentSlide < monthlyStats.length && (
                           <Card className="w-full max-w-md shadow-sm" key={currentSlide}>
                             <CardHeader className="pb-2">
-                              <CardTitle className="text-lg font-medium text-center">
-                                {format(parseISO(monthlyStats[currentSlide].month), 'yyyy년 M월', { locale: ko })}
+                              <CardTitle className="text-lg font-medium flex items-center justify-center space-x-4">
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  onClick={() => handleSlide('prev')} 
+                                  disabled={currentSlide === 0}
+                                  className="h-8 w-8 p-0"
+                                >
+                                  <ChevronLeft className="h-4 w-4" />
+                                </Button>
+                                <span>
+                                  {format(parseISO(monthlyStats[currentSlide].month), 'yyyy년 M월', { locale: ko })}
+                                </span>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  onClick={() => handleSlide('next')} 
+                                  disabled={currentSlide === monthlyStats.length - 1}
+                                  className="h-8 w-8 p-0"
+                                >
+                                  <ChevronRight className="h-4 w-4" />
+                                </Button>
                               </CardTitle>
                             </CardHeader>
                             <CardContent>
@@ -165,41 +179,7 @@ export default function Dashboard() {
                       </div>
                     </div>
                     
-                    {/* 슬라이드 네비게이션 */}
-                    <div className="flex justify-between mt-4">
-                      <Button 
-                        variant="outline" 
-                        size="icon" 
-                        onClick={() => handleSlide('prev')} 
-                        disabled={currentSlide === 0}
-                        className="rounded-full"
-                      >
-                        <ChevronLeft className="h-4 w-4" />
-                      </Button>
-                      
-                      <div className="flex space-x-1 items-center">
-                        {monthlyStats.map((_, index) => (
-                          <button
-                            key={index}
-                            className={`h-2 w-2 rounded-full transition-colors ${
-                              index === currentSlide ? 'bg-primary' : 'bg-muted'
-                            }`}
-                            onClick={() => setCurrentSlide(index)}
-                            aria-label={`슬라이드 ${index + 1}로 이동`}
-                          />
-                        ))}
-                      </div>
-                      
-                      <Button 
-                        variant="outline" 
-                        size="icon" 
-                        onClick={() => handleSlide('next')} 
-                        disabled={currentSlide === monthlyStats.length - 1}
-                        className="rounded-full"
-                      >
-                        <ChevronRight className="h-4 w-4" />
-                      </Button>
-                    </div>
+
                   </div>
                 ) : (
                   <div className="text-center py-8 text-muted-foreground">
@@ -266,4 +246,4 @@ export default function Dashboard() {
       </main>
     </div>
   )
-} 
+}
