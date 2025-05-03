@@ -3,8 +3,8 @@ import { GeistMono } from 'geist/font/mono'
 import './globals.css'
 
 export const metadata = {
-  title: 'Todo App',
-  description: '할 일 관리 애플리케이션',
+  title: 'SimpleTodo',
+  description: '간단한 할 일 관리',
 }
 
 export default function RootLayout({ children }) {

@@ -1,28 +1,46 @@
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import useAuthStore from '@/store/useAuthStore'
 
 export function AuthForm() {
+  const router = useRouter()
   const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [displayName, setDisplayName] = useState('')
-  const { signIn, signUp, error } = useAuthStore()
+  const [isLoading, setIsLoading] = useState(false)
+  const { signIn, signUp, error, checkEmailExists } = useAuthStore()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (isLogin) {
-      await signIn(email, password)
-    } else {
-      await signUp(email, password, displayName)
+    setIsLoading(true)
+    
+    try {
+      if (isLogin) {
+        await signIn(email, password)
+      } else {
+        // 회원가입 시 이메일 중복 체크
+        const emailExists = await checkEmailExists(email)
+        if (emailExists) {
+          useAuthStore.setState({ error: '이미 가입된 이메일입니다. 로그인을 시도해보세요.' })
+          return
+        }
+        await signUp(email, password, displayName)
+      }
+    } catch (error) {
+      console.error('Form submission error:', error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-4">
-      <Card className="w-full max-w-sm">
+      <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl">SimpleTodo</CardTitle>
           <CardDescription>
@@ -68,18 +86,35 @@ export function AuthForm() {
                 placeholder="비밀번호를 입력해주세요"
                 required
               />
+              {isLogin && (
+                <div className="text-right">
+                  <Link
+                    href="/auth/reset-password"
+                    className="text-sm text-blue-600 hover:text-blue-800"
+                  >
+                    비밀번호를 잊으셨나요?
+                  </Link>
+                </div>
+              )}
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button type="submit" className="w-full">
-              {isLogin ? '로그인' : '회원가입'}
+            <Button 
+              type="submit" 
+              className="w-full"
+              disabled={isLoading}
+            >
+              {isLoading ? '처리 중...' : (isLogin ? '로그인' : '회원가입')}
             </Button>
             <p className="text-sm text-center text-muted-foreground">
               {isLogin ? '아직 계정이 없으신가요? ' : '이미 계정이 있으신가요? '}
               <button
                 type="button"
                 className="text-primary hover:underline"
-                onClick={() => setIsLogin(!isLogin)}
+                onClick={() => {
+                  setIsLogin(!isLogin)
+                  useAuthStore.setState({ error: null })
+                }}
               >
                 {isLogin ? '회원가입하기' : '로그인하기'}
               </button>

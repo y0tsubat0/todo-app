@@ -3,18 +3,19 @@
 
 // 전역 상태 관리를 위한 Zustand 스토어와 컴포넌트들을 import
 import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import useAuthStore from '@/store/useAuthStore'
 import useTodoStore from '@/store/useTodoStore'
 import { Navbar } from '@/components/Navbar'
 import { TodoForm } from '@/components/TodoForm'
 import { TodoList } from '@/components/TodoList'
-import { AuthForm } from '@/components/AuthForm'
 import { Trash2 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
 export default function Home() {
+  const router = useRouter()
   const { user, isLoading: authLoading, checkSession } = useAuthStore()
   const { 
     todos, 
@@ -41,19 +42,21 @@ export default function Home() {
     }
   }, [user, fetchTodos])
 
+  // 로그인하지 않은 사용자를 로그인 페이지로 리다이렉트
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/auth/signin')
+    }
+  }, [authLoading, user, router])
+
   // 인증 로딩 중
   if (authLoading) {
     return <div className="text-center p-4">로딩 중...</div>
   }
 
-  // 비로그인 상태
+  // 비로그인 상태 - 로그인 페이지로 리다이렉트 중
   if (!user) {
-    return (
-      <div>
-        <Navbar />
-        <AuthForm />
-      </div>
-    )
+    return <div className="text-center p-4">로그인 페이지로 이동 중...</div>
   }
 
   // 할 일 목록을 진행중/완료된 항목으로 필터링
