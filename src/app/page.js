@@ -9,6 +9,7 @@ import { Navbar } from '@/components/Navbar'
 import { TodoForm } from '@/components/TodoForm'
 import { TodoList } from '@/components/TodoList'
 import { AuthForm } from '@/components/AuthForm'
+import { Trash2 } from 'lucide-react'
 
 export default function Home() {
   const { user, isLoading: authLoading, checkSession } = useAuthStore()
@@ -55,7 +56,6 @@ export default function Home() {
   // 할 일 목록을 진행중/완료된 항목으로 필터링
   const activeTodos = todos.filter(todo => !todo.completed && !todo.is_deleted)
   const completedTodos = todos.filter(todo => todo.completed && !todo.is_deleted)
-  const deletedTodos = todos.filter(todo => todo.is_deleted)
 
   if (error) {
     return <div className="text-red-500 text-center p-4">{error}</div>
@@ -78,9 +78,7 @@ export default function Home() {
               todos={activeTodos}
               onToggle={toggleTodo}
               onDelete={deleteTodo}
-              onRestore={restoreTodo}
               showDeleted={false}
-              onToggleShowDeleted={toggleShowDeleted}
               emptyMessage="진행중인 할 일이 없습니다."
             />
 
@@ -89,21 +87,8 @@ export default function Home() {
               todos={completedTodos}
               onToggle={toggleTodo}
               onDelete={deleteTodo}
-              onRestore={restoreTodo}
               showDeleted={false}
-              onToggleShowDeleted={toggleShowDeleted}
               emptyMessage="완료된 할 일이 없습니다."
-            />
-
-            <TodoList
-              title="삭제된 할 일"
-              todos={deletedTodos}
-              onToggle={toggleTodo}
-              onDelete={deleteTodo}
-              onRestore={restoreTodo}
-              showDeleted={true}
-              onToggleShowDeleted={toggleShowDeleted}
-              emptyMessage="삭제된 할 일이 없습니다."
             />
           </>
         )}

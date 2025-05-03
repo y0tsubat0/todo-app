@@ -9,21 +9,28 @@ const useTodoStore = create((set, get) => ({
 
   // 할 일 목록 불러오기
   fetchTodos: async () => {
-    set({ isLoading: true })
+    set({ isLoading: true, error: null })
     try {
-      const { data: { user } } = await supabase.auth.getUser()
+      // 30일이 지난 삭제된 할 일 자동 제거
+      const thirtyDaysAgo = new Date()
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+      
+      const { data: expiredTodos } = await supabase
+        .from('todos')
+        .delete()
+        .match({ is_deleted: true })
+        .lt('deleted_at', thirtyDaysAgo.toISOString())
+
+      // 남은 할 일 목록 가져오기
       const { data, error } = await supabase
         .from('todos')
         .select('*')
-        .eq('user_id', user.id)
         .order('created_at', { ascending: false })
 
       if (error) throw error
-      set({ todos: data, error: null })
+      set({ todos: data || [], isLoading: false })
     } catch (error) {
-      set({ error: error.message })
-    } finally {
-      set({ isLoading: false })
+      set({ error: '할 일 목록을 불러오는데 실패했습니다.', isLoading: false })
     }
   },
 
@@ -43,7 +50,7 @@ const useTodoStore = create((set, get) => ({
       if (error) throw error
       set(state => ({ todos: [data, ...state.todos] }))
     } catch (error) {
-      set({ error: error.message })
+      set({ error: '할 일을 추가하는데 실패했습니다.' })
     }
   },
 
@@ -63,7 +70,7 @@ const useTodoStore = create((set, get) => ({
         )
       }))
     } catch (error) {
-      set({ error: error.message })
+      set({ error: '할 일 상태를 변경하는데 실패했습니다.' })
     }
   },
 
@@ -72,17 +79,20 @@ const useTodoStore = create((set, get) => ({
     try {
       const { error } = await supabase
         .from('todos')
-        .update({ is_deleted: true })
+        .update({ 
+          is_deleted: true,
+          deleted_at: new Date().toISOString()
+        })
         .eq('id', id)
 
       if (error) throw error
       set(state => ({
         todos: state.todos.map(t =>
-          t.id === id ? { ...t, is_deleted: true } : t
+          t.id === id ? { ...t, is_deleted: true, deleted_at: new Date().toISOString() } : t
         )
       }))
     } catch (error) {
-      set({ error: error.message })
+      set({ error: '할 일을 삭제하는데 실패했습니다.' })
     }
   },
 
@@ -91,17 +101,20 @@ const useTodoStore = create((set, get) => ({
     try {
       const { error } = await supabase
         .from('todos')
-        .update({ is_deleted: false })
+        .update({ 
+          is_deleted: false,
+          deleted_at: null
+        })
         .eq('id', id)
 
       if (error) throw error
       set(state => ({
         todos: state.todos.map(t =>
-          t.id === id ? { ...t, is_deleted: false } : t
+          t.id === id ? { ...t, is_deleted: false, deleted_at: null } : t
         )
       }))
     } catch (error) {
-      set({ error: error.message })
+      set({ error: '할 일을 복구하는데 실패했습니다.' })
     }
   },
 
