@@ -117,6 +117,7 @@ export default function Dashboard() {
           <>
             {/* 월별 할 일 통계 섹션 */}
             <div className="mb-8">
+            <h1 className="text-xl font-bold mb-2">월별 할 일 통계</h1>
               <div className="relative">
                 {isLoadingStats ? (
                   <div className="text-center py-8">통계 로딩 중...</div>
@@ -166,11 +167,11 @@ export default function Dashboard() {
                                   <span className="font-medium text-blue-600">{monthlyStats[currentSlide].active_todos}</span>
                                 </div>
                                 <div className="mt-4">
-                                  <div className="flex justify-between mb-1">
-                                    <span className="text-xs text-muted-foreground">완료율</span>
-                                    <span className="text-xs font-medium">{monthlyStats[currentSlide].completion_rate}%</span>
+                                  <div className="flex justify-between items-center">
+                                    
+                                    <Progress value={monthlyStats[currentSlide].completion_rate} className="h-2 flex-1 mx-4" />
+                                    <span className="text-muted-foreground">{monthlyStats[currentSlide].completion_rate}%</span>
                                   </div>
-                                  <Progress value={monthlyStats[currentSlide].completion_rate} className="h-2" />
                                 </div>
                               </div>
                             </CardContent>
@@ -190,34 +191,24 @@ export default function Dashboard() {
             </div>
 
             {/* 캘린더 및 날짜별 할 일 섹션 */}
-            <div className="grid md:grid-cols-2 gap-8 mb-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle>캘린더</CardTitle>
-                  <CardDescription>날짜를 선택하여 해당 날짜의 할 일을 확인하세요</CardDescription>
-                </CardHeader>
-                <CardContent className="flex justify-center items-center">
-                  <div className="mx-auto">
-                    <Calendar
-                      mode="single"
-                      selected={selectedDate}
-                      onSelect={date => setSelectedDate(date || new Date())}
-                      locale={ko}
-                      className="w-full max-w-full rounded-md border"
-                    />
-                  </div>
-                </CardContent>
-                <CardFooter className="text-sm text-muted-foreground">
-                  {format(selectedDate, 'PPP', { locale: ko })}
-                </CardFooter>
-              </Card>
+            <div className="grid md:grid-cols-2 gap-4 mb-8">
+              <h1 className="text-xl font-bold mb-2">날짜별 할 일</h1>
+              <div className="flex flex-col w-full items-center">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={date => setSelectedDate(date || new Date())}
+                  locale={ko}
+                  className="[&_.rdp-table]:w-full [&_.rdp]:w-full rounded-md border shadow-sm"
+                />
+              </div>
 
               <Card>
                 <CardHeader>
-                  <CardTitle>
+                  <CardTitle className="text-lg">
                     <div className="flex items-center">
                       <CalendarIcon className="w-5 h-5 mr-2" />
-                      <span>{format(selectedDate, 'PPP', { locale: ko })}의 할 일</span>
+                      <span>{format(selectedDate, 'PPP', { locale: ko })}</span>
                     </div>
                   </CardTitle>
                 </CardHeader>
